@@ -6,11 +6,7 @@ import os
 
 import torch
 from setuptools import find_packages
-# from setuptools import setup
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup
 from torch.utils.cpp_extension import CUDA_HOME
 from torch.utils.cpp_extension import CppExtension
 from torch.utils.cpp_extension import CUDAExtension
@@ -20,7 +16,7 @@ requirements = ["torch", "torchvision"]
 
 def get_extensions():
     this_dir = os.path.dirname(os.path.abspath(__file__))
-    extensions_dir = os.path.join(this_dir, "model", "csrc")
+    extensions_dir = this_dir
 
     main_file = glob.glob(os.path.join(extensions_dir, "*.cpp"))
     source_cpu = glob.glob(os.path.join(extensions_dir, "cpu", "*.cpp"))
@@ -49,7 +45,7 @@ def get_extensions():
 
     ext_modules = [
         extension(
-            "model._C",
+            "C_ROIPooling",
             sources,
             include_dirs=include_dirs,
             define_macros=define_macros,
@@ -61,11 +57,9 @@ def get_extensions():
 
 
 setup(
-    name="faster_rcnn",
+    name="C_ROIPooling",
     version="0.1",
-    description="object detection in pytorch",
-    packages=find_packages(exclude=("configs", "tests",)),
-    # install_requires=requirements,
+    description="ROIPooling in C++ or CUDA",
     ext_modules=get_extensions(),
     cmdclass={"build_ext": torch.utils.cpp_extension.BuildExtension},
 )
